@@ -66,6 +66,38 @@ class Company {
     return companiesRes.rows;
   }
 
+
+  // Take three {nameLike, minEmployees, maxEmployees}
+
+  static getWhereClause(queryStringsParams) {
+    if(nameLike) {
+      `name ILIKE $1, ['%{nameLike}%']`
+    }
+    if(minEmployees){
+      numEmployees >= $1, [minEmployees]
+    }
+    if(maxEmployees){
+      numEmployees <= $1, [maxEmployees]
+    }
+    if(nameLike && minEmployees) {
+      `name ILIKE $1 AND  numEmployees >= $2, ['%{nameLike}%', minEmployees]`
+    }
+    if(nameLike && maxEmployees) {
+      `name ILIKE $1 AND  numEmployees <= $2, ['%{nameLike}%', maxEmployees]`
+    }
+    if(nameLike && maxEmployees && minEmployees) {
+      `name ILIKE $1 AND  numEmployees <= $2 AND numEmployees >= $3, 
+      ['%{nameLike}%', maxEmployees, minEmployees]`
+    }
+    if(maxEmployees && minEmployees) {
+      `numEmployees <= $1 AND numEmployees >= $2, 
+      [maxEmployees, minEmployees]`
+    }
+
+  }
+
+
+
   //NOTE: let's make a seperate function that creates a string for our 
   //WHERE clause for our sql command
 

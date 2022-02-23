@@ -85,7 +85,35 @@ describe("findAll", function () {
       },
     ]);
   });
+
+
+  // test findAll with filters
+
+  // filter by the name
+
+  // filter by the minEmployees
+
+  // filter by the maxEmployees
+
+  // filter by the name and minEmployees
+
+  // filter by the name and maxEmployees
+
+  // filter by the name and minEmployees and maxEmployees
+
+  // filter by the minEmployees and maxEployees
+
+  // test invalid filter conditions
+
+  // test minEmployees > maxEmployees
+  // test maxEmployees is too low
+  // test minEmployees is too high
+  // test nameLike doesn't exist
+
+
 });
+
+
 
 /************************************** get */
 
