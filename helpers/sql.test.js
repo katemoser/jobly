@@ -3,9 +3,8 @@
 const {BadRequestError} = require("../expressError");
 const { sqlForPartialUpdate } = require("./sql");
 
-//What to test:
 
-
+/************************************** sqlForPartialUpdate */
 describe("sqlForPartialUpdate", function(){
     const dataToUpdate = {
         firstName: 'Aliya', 
@@ -18,7 +17,7 @@ describe("sqlForPartialUpdate", function(){
 
     const allSnakeData = {
         age: 32,
-    }
+    };
 
     //test with valid data
     //should return object with string 
@@ -30,6 +29,7 @@ describe("sqlForPartialUpdate", function(){
             values: ['Aliya', 32],
           });
     });
+
     //test with invalid data (empty object)
     //should return bad request error 
     test("invalid input -- empty object", function(){
@@ -40,9 +40,6 @@ describe("sqlForPartialUpdate", function(){
             expect(err.status).toEqual(400);
             expect(err.message).toEqual("No data");
         }
-        //expect(result.message).toEqual("No data");
-        //console.error("RESULT: ", result)
-        //expect(result.status).toEqual(400);
     });
 
     //test for empty jsToSql -- should still work
@@ -51,7 +48,7 @@ describe("sqlForPartialUpdate", function(){
         expect(result).toEqual({
             setCols: '"age"=$1',
             values: [32],
-        })
+        });
 
-    })
+    });
 });

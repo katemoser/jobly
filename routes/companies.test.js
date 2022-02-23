@@ -106,7 +106,81 @@ describe("GET /companies", function () {
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(500);
   });
+
+
+  /** Get companies according the given name*/
+  
+  test("filter the name correctly", async function() {
+    const resp = await request(app).get("/companies/?nameLike=c2");
+    expect(resp.body).toEqual({
+      companies:
+          [{
+              handle: "c2",
+              name: "C2",
+              description: "Desc2",
+              numEmployees: 2,
+              logoUrl: "http://c2.img",
+            }]
+    });
+  });
+
+  /** Get companies according the given name*/
+  
+  test("filter the name correctly", async function() {
+    const resp = await request(app).get("/companies/?nameLike=C2");
+    expect(resp.body).toEqual({
+      companies:
+          [{
+              handle: "c2",
+              name: "C2",
+              description: "Desc2",
+              numEmployees: 2,
+              logoUrl: "http://c2.img",
+            }]
+    });
+  });
+
+  /** Get companies according the given name*/
+  
+  test("filter the name correctly", async function() {
+    const resp = await request(app).get("/companies/?nameLike=c");
+    expect(resp.body).toEqual({
+      companies:
+          [{
+              handle: "c2",
+              name: "C2",
+              description: "Desc2",
+              numEmployees: 2,
+              logoUrl: "http://c2.img",
+            }]
+    });
+  });
+
+  test("filter the name correctly", async function() {
+    const resp = await request(app).get("/companies/?nameLike=C");
+    expect(resp.body).toEqual({
+      companies:
+          [{
+              handle: "c2",
+              name: "C2",
+              description: "Desc2",
+              numEmployees: 2,
+              logoUrl: "http://c2.img",
+            }]
+    });
+  });
+
+  /** Get companies according the given name*/
+  
+  test("filter the name correctly", async function() {
+    const resp = await request(app).get("/companies/?nameLike=apple");
+    expect(resp.body).toEqual({
+      companies:[]});
+  });
+
 });
+
+
 
 /************************************** GET /companies/:handle */
 

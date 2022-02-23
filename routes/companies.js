@@ -51,6 +51,8 @@ router.get("/", async function (req, res, next) {
   return res.json({ companies });
 });
 
+
+
 /** GET /[handle]  =>  { company }
  *
  *  Company is { handle, name, description, numEmployees, logoUrl, jobs }
