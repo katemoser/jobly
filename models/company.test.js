@@ -90,16 +90,163 @@ describe("findAll", function () {
   // test findAll with filters
 
   // filter by the name
+  test("works: filter by name", async function () {
+    let query = {
+      nameLike: "c"
+    }
+    const companies = await Company.findAll(query);
+    expect(companies).toEqual([
+      {
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        numEmployees: 1,
+        logoUrl: "http://c1.img",
+      },
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      },
+      {
+        handle: "c3",
+        name: "C3",
+        description: "Desc3",
+        numEmployees: 3,
+        logoUrl: "http://c3.img",
+      },
+    ]);
+  });
+
+  test("works: filter by nameLike = '1', one result", async function () {
+    let query = {
+      nameLike: "1",
+    }
+    const companies = await Company.findAll(query);
+    expect(companies).toEqual([
+      {
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        numEmployees: 1,
+        logoUrl: "http://c1.img",
+      },
+    ]);
+  });
 
   // filter by the minEmployees
+  test("works: filter by minEmployees = '1', one result", async function () {
+    let query = {
+      minEmployees: 1,
+    }
+    const companies = await Company.findAll(query);
+    expect(companies).toEqual([
+      {
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        numEmployees: 1,
+        logoUrl: "http://c1.img",
+      },
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      },
+      {
+        handle: "c3",
+        name: "C3",
+        description: "Desc3",
+        numEmployees: 3,
+        logoUrl: "http://c3.img",
+      },
+    ]);
+  });
 
   // filter by the maxEmployees
 
+  test("works: filter by maxEmployees = '2', two results", async function () {
+    let query = {
+      maxEmployees: 2,
+    }
+    const companies = await Company.findAll(query);
+    expect(companies).toEqual([
+      {
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        numEmployees: 1,
+        logoUrl: "http://c1.img",
+      },
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      },
+    ]);
+  });
+
   // filter by the name and minEmployees
+  test("works: filter by name and minEmployees", async function () {
+    let query = {
+      nameLike: "c2",
+      minEmployees: 1,
+    }
+    const companies = await Company.findAll(query);
+    expect(companies).toEqual([
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      },
+    ]);
+  });
 
   // filter by the name and maxEmployees
+  test("works: filter by name and maxEmployees", async function () {
+    let query = {
+      nameLike: "c2",
+      maxEmployees: 3,
+    }
+    const companies = await Company.findAll(query);
+    expect(companies).toEqual([
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      },
+    ]);
+  });
+
 
   // filter by the name and minEmployees and maxEmployees
+  test("works: filter by everything", async function () {
+    let query = {
+      nameLike: "c2",
+      minEmployees: 1,
+      maxEmployees: 3,
+    }
+    const companies = await Company.findAll(query);
+    expect(companies).toEqual([
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      },
+    ]);
+  });
 
   // filter by the minEmployees and maxEployees
 

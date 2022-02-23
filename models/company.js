@@ -50,6 +50,17 @@ class Company {
   }
 
   /** Find all companies.
+   * 
+   * Optional filter functionality. 
+   * Can be pass following parameters:
+   *      nameLike
+   *      minEmployees
+   *      maxEmployees
+   * 
+   * takes object like : {nameLike, minEmployees, maxEmployees}
+   * 
+   * calls getWhereClause(query string params) 
+   * to get where clause for SQL command
    *
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
@@ -67,31 +78,50 @@ class Company {
   }
 
 
-  // Take three {nameLike, minEmployees, maxEmployees}
 
+  /** Function for generating WHERE clause for 
+   * SQL command in findAll() {with filter!}
+   * 
+   * takes: an object where keys are names of query
+   * string parameters, and values are user inputs
+   *                  like { nameLike : "apple",
+   *                         minEmployees: 10,
+   *                         maxEmployees: 20,}
+   * 
+   * RETURNS: Object of where clause string, 
+   * and array of values for $1, etc
+   * 
+   * like: {whereClause : "numEmployees <= $1 AND numEmployees >= $2",
+   *        values:  [maxEmployees, minEmployees]} 
+   * 
+   */
   static getWhereClause(queryStringsParams) {
-    if(nameLike) {
-      `name ILIKE $1, ['%{nameLike}%']`
-    }
-    if(minEmployees){
-      numEmployees >= $1, [minEmployees]
-    }
-    if(maxEmployees){
-      numEmployees <= $1, [maxEmployees]
-    }
-    if(nameLike && minEmployees) {
-      `name ILIKE $1 AND  numEmployees >= $2, ['%{nameLike}%', minEmployees]`
-    }
-    if(nameLike && maxEmployees) {
-      `name ILIKE $1 AND  numEmployees <= $2, ['%{nameLike}%', maxEmployees]`
-    }
-    if(nameLike && maxEmployees && minEmployees) {
-      `name ILIKE $1 AND  numEmployees <= $2 AND numEmployees >= $3, 
-      ['%{nameLike}%', maxEmployees, minEmployees]`
-    }
-    if(maxEmployees && minEmployees) {
-      `numEmployees <= $1 AND numEmployees >= $2, 
-      [maxEmployees, minEmployees]`
+    // if(nameLike) {
+    //   `name ILIKE $1, ['%{nameLike}%']`
+    // }
+    // if(minEmployees){
+    //   numEmployees >= $1, [minEmployees]
+    // }
+    // if(maxEmployees){
+    //   numEmployees <= $1, [maxEmployees]
+    // }
+    // if(nameLike && minEmployees) {
+    //   `name ILIKE $1 AND  numEmployees >= $2, ['%{nameLike}%', minEmployees]`
+    // }
+    // if(nameLike && maxEmployees) {
+    //   `name ILIKE $1 AND  numEmployees <= $2, ['%{nameLike}%', maxEmployees]`
+    // }
+    // if(nameLike && maxEmployees && minEmployees) {
+    //   `name ILIKE $1 AND  numEmployees <= $2 AND numEmployees >= $3, 
+    //   ['%{nameLike}%', maxEmployees, minEmployees]`
+    // }
+    // if(maxEmployees && minEmployees) {
+    //   `numEmployees <= $1 AND numEmployees >= $2, 
+    //   [maxEmployees, minEmployees]`
+    // }
+    //if({}){
+    //  {}
+    //}
     }
 
   }
