@@ -66,6 +66,11 @@ class Company {
     return companiesRes.rows;
   }
 
+  //NOTE: let's make a seperate function that creates a string for our 
+  //WHERE clause for our sql command
+
+  //ALSO: doc strings
+
   /** Given a company handle, return data about company.
    *
    * Returns { handle, name, description, numEmployees, logoUrl, jobs }

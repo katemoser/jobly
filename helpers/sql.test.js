@@ -34,7 +34,8 @@ describe("sqlForPartialUpdate", function(){
     //should return bad request error 
     test("invalid input -- empty object", function(){
         try{
-            let result = sqlForPartialUpdate({}, jsToSql);
+            sqlForPartialUpdate({}, jsToSql);
+            fail();
         } catch(err){
             expect(err instanceof BadRequestError).toBeTruthy();
             expect(err.status).toEqual(400);

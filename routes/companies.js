@@ -41,7 +41,9 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  * Can filter on provided search filters:
  * - minEmployees
  * - maxEmployees
+ *    - if min > max, return 400 error
  * - nameLike (will find case-insensitive, partial matches)
+ *    if not found, return 400 bad request
  *
  * Authorization required: none
  */
