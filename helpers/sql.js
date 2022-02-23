@@ -1,6 +1,19 @@
+"use strict";
+
 const { BadRequestError } = require("../expressError");
 
-// THIS NEEDS SOME GREAT DOCUMENTATION.
+/** It takes two objects as the parameters, first params is about the data that 
+ * need to update, the second is conversion from the JavaScript object key's 
+ * name(camelCase) to database column's name(snake_case).
+ * 
+ * input: ({firstName: 'Aliya', age: 32}, {firstName: "first_name", age: "age"})
+ * 
+ * returns : 
+ * {
+    setCols: '"first_name"=$1, "age"=$2',
+    values: ['Aliya', 32],
+  }
+ */
 
 function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   const keys = Object.keys(dataToUpdate);
