@@ -11,9 +11,11 @@ const {
   commonAfterEach,
   commonAfterAll,
   u1Token,
+  adminToken,
 } = require("./_testCommon");
 const { findAll } = require("../models/user");
 const { BadRequestError } = require("../expressError");
+
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
@@ -31,36 +33,35 @@ describe("POST /companies", function () {
     numEmployees: 10,
   };
 
-  test("ok for users", async function () {
+  test("not OK for users", async function () {
     const resp = await request(app)
       .post("/companies")
       .send(newCompany)
       .set("authorization", `Bearer ${u1Token}`);
-    expect(resp.statusCode).toEqual(201);
-    expect(resp.body).toEqual({
-      company: newCompany,
-    });
+    expect(resp.statusCode).toEqual(401);
   });
 
-  test("bad request with missing data", async function () {
+
+  test("bad request with missing data (logged in as admin)", async function () {
+    
     const resp = await request(app)
       .post("/companies")
       .send({
         handle: "new",
         numEmployees: 10,
       })
-      .set("authorization", `Bearer ${u1Token}`);
+      .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(400);
   });
 
-  test("bad request with invalid data", async function () {
+  test("bad request with invalid data (loggen in as admin)", async function () {
     const resp = await request(app)
       .post("/companies")
       .send({
         ...newCompany,
         logoUrl: "not-a-url",
       })
-      .set("authorization", `Bearer ${u1Token}`);
+      .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(400);
   });
 });
