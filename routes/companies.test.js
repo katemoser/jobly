@@ -141,6 +141,7 @@ describe("GET /companies", function () {
         await request(app).get("/companies/?happyEmployees=apple");
         fail();
       } catch (err) {
+        console.log("error *************:", err);
         expect(err instanceof BadRequestError).toBeTruthy();
         expect(err.status).toEqual(400);
       }
@@ -154,6 +155,7 @@ describe("GET /companies", function () {
       await request(app).get("/companies/?maxEmployees=cat");
       fail();
     } catch (err) {
+      console.log("error *************:", err);
       expect(err instanceof BadRequestError).toBeTruthy();
       expect(err.status).toEqual(400);
     }
@@ -164,6 +166,7 @@ describe("GET /companies", function () {
       await request(app).get("/companies/?minEmployees=cat");
       fail();
     } catch (err) {
+      console.log("error *************:", err);
       expect(err instanceof BadRequestError).toBeTruthy();
       expect(err.status).toEqual(400);
     }
@@ -176,6 +179,7 @@ describe("GET /companies", function () {
       await request(app).get("/companies/?minEmployees=3&maxEmployees=1");
       fail();
     } catch (err) {
+      console.log("error *************:", err);
       expect(err instanceof BadRequestError).toBeTruthy();
       expect(err.status).toEqual(400);
     }

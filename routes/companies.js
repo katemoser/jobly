@@ -49,32 +49,39 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  */
 
 router.get("/", async function (req, res, next) {
+  console.log("req.query: ", req.query);
   let companies;
-  if(req.query){
+  if (Object.keys(req.query).length > 0) {
+    if(validateQuery(req.query)){
+      companies = await Company.findAll(req.query);
+    } 
+  } else {
+   companies = await Company.findAll();
   }
-  
+  return res.json({ companies });
 });
 
-function validateQuery(query){
+
+function validateQuery(query) {
   const queryKeys = ["nameLike", "minEmployees", "maxEmployees"];
   const hasValidKeys = Object.keys(query).every(key => queryKeys.includes(key));
 
   //TODO: REFACTOR TO SWITCH??
-  if(hasValidKeys){
-    if(! ( query.minEmployees && parseInt(query.minEmployees)) ){
+  if (hasValidKeys) {
+    if (!(query.minEmployees)) {
       throw new BadRequestError("Incorrect type for minEmployees");
     }
-    if(! ( query.maxEmployees && parseInt(query.maxEmployees)) ){
+    if (!(query.maxEmployees && parseInt(query.maxEmployees))) {
       throw new BadRequestError("Incorrect type for maxEmployees");
     }
-    if((query.minEmployees && query.maxEmployees) && (query.minEmployees > query.maxEmployees)){
-      throw new BadRequestError("Minimum number of employees must less than or equal to max"); 
+    if ((query.minEmployees && query.maxEmployees) && (query.minEmployees > query.maxEmployees)) {
+      throw new BadRequestError("Minimum number of employees must less than or equal to max");
     }
-  }
-  else{
+
+  } else {
     throw new BadRequestError("Invalid query paramters");
   }
-  return True
+  return true;
 }
 
 
