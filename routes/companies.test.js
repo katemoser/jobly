@@ -161,7 +161,8 @@ describe("GET /companies", function () {
     expect(resp.status).toEqual(400);
   });
 
-  test("check 2 < 12", async function () {
+  
+  test("check whether 2 < 12 -- for type conversion purposes", async function () {
     let resp = await request(app).get("/companies/?minEmployees=2&maxEmployees=12");
     expect(resp.body).toEqual({
       companies:
