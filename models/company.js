@@ -18,16 +18,16 @@ class Company {
 
   static async create({ handle, name, description, numEmployees, logoUrl }) {
     const duplicateCheck = await db.query(
-        `SELECT handle
+      `SELECT handle
            FROM companies
            WHERE handle = $1`,
-        [handle]);
+      [handle]);
 
     if (duplicateCheck.rows[0])
       throw new BadRequestError(`Duplicate company: ${handle}`);
 
     const result = await db.query(
-        `INSERT INTO companies(
+      `INSERT INTO companies(
           handle,
           name,
           description,
@@ -36,13 +36,13 @@ class Company {
            VALUES
              ($1, $2, $3, $4, $5)
            RETURNING handle, name, description, num_employees AS "numEmployees", logo_url AS "logoUrl"`,
-        [
-          handle,
-          name,
-          description,
-          numEmployees,
-          logoUrl,
-        ],
+      [
+        handle,
+        name,
+        description,
+        numEmployees,
+        logoUrl,
+      ],
     );
     const company = result.rows[0];
 
@@ -65,9 +65,24 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll() {
-    const companiesRes = await db.query(
+  static async findAll(queryStringParams) {
+    if (queryStringParams) {
+
+      let result = Company.getWhereClause(queryStringParams);
+      const companiesRes = await db.query(
         `SELECT handle,
+                name,
+                description,
+                num_employees AS "numEmployees",
+                logo_url AS "logoUrl"
+           FROM companies
+           WHERE ${result.whereClause}
+           ORDER BY name`, result.values);
+      return companiesRes.rows;
+    }
+
+    const companiesRes = await db.query(
+      `SELECT handle,
                 name,
                 description,
                 num_employees AS "numEmployees",
@@ -94,35 +109,42 @@ class Company {
    * like: {whereClause : "numEmployees <= $1 AND numEmployees >= $2",
    *        values:  [maxEmployees, minEmployees]} 
    * 
+   *  const cols = keys.map((colName, idx) =>
+      `"${jsToSql[colName] || colName}"=$${idx + 1}`,
+  );
    */
-  // static getWhereClause(queryStringsParams) {
-    // if(nameLike) {
-    //   `name ILIKE $1, ['%{nameLike}%']`
-    // }
-    // if(minEmployees){
-    //   numEmployees >= $1, [minEmployees]
-    // }
-    // if(maxEmployees){
-    //   numEmployees <= $1, [maxEmployees]
-    // }
-    // if(nameLike && minEmployees) {
-    //   `name ILIKE $1 AND  numEmployees >= $2, ['%{nameLike}%', minEmployees]`
-    // }
-    // if(nameLike && maxEmployees) {
-    //   `name ILIKE $1 AND  numEmployees <= $2, ['%{nameLike}%', maxEmployees]`
-    // }
-    // if(nameLike && maxEmployees && minEmployees) {
-    //   `name ILIKE $1 AND  numEmployees <= $2 AND numEmployees >= $3, 
-    //   ['%{nameLike}%', maxEmployees, minEmployees]`
-    // }
-    // if(maxEmployees && minEmployees) {
-    //   `numEmployees <= $1 AND numEmployees >= $2, 
-    //   [maxEmployees, minEmployees]`
-    // }
-   
-  //   }
+  static getWhereClause(queryStringParams) {
+    let keys = Object.keys(queryStringParams);
 
-  // }
+    let whereClause = "";
+    let values = [];
+    let idx = 0;
+    for (let key of keys) {
+      if (idx > 0) {
+        whereClause.concat(" AND ");
+      }
+      if (key === "nameLike") {
+        whereClause.concat(`name ILIKE $${idx++}`);
+        values.push(`%${queryStringParams[key]}%`);
+      }
+
+      if (key === "minEmployees") {
+        whereClause.concat(`numEmployees >= $${idx++}`);
+        values.push(queryStringParams[key]);
+      }
+
+      if (key === "maxEmployees") {
+        whereClause.concat(`numEmployees <= $${idx++}`);
+        values.push(queryStringParams[key]);
+      }
+
+      return {
+        whereClause,
+        values,
+      };
+    }
+
+
 
 
 
@@ -141,14 +163,14 @@ class Company {
 
   static async get(handle) {
     const companyRes = await db.query(
-        `SELECT handle,
+      `SELECT handle,
                 name,
                 description,
                 num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
            FROM companies
            WHERE handle = $1`,
-        [handle]);
+      [handle]);
 
     const company = companyRes.rows[0];
 
@@ -171,11 +193,11 @@ class Company {
 
   static async update(handle, data) {
     const { setCols, values } = sqlForPartialUpdate(
-        data,
-        {
-          numEmployees: "num_employees",
-          logoUrl: "logo_url",
-        });
+      data,
+      {
+        numEmployees: "num_employees",
+        logoUrl: "logo_url",
+      });
     const handleVarIdx = "$" + (values.length + 1);
 
     const querySql = `
@@ -198,11 +220,11 @@ class Company {
 
   static async remove(handle) {
     const result = await db.query(
-        `DELETE
+      `DELETE
            FROM companies
            WHERE handle = $1
            RETURNING handle`,
-        [handle]);
+      [handle]);
     const company = result.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);
