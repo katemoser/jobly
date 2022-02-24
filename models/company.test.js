@@ -31,7 +31,7 @@ describe("create", function () {
     expect(company).toEqual(newCompany);
 
     const result = await db.query(
-          `SELECT handle, name, description, num_employees, logo_url
+      `SELECT handle, name, description, num_employees, logo_url
            FROM companies
            WHERE handle = 'new'`);
     expect(result.rows).toEqual([
@@ -280,10 +280,10 @@ describe("findAll", function () {
       minEmployees: 3,
       maxEmployees: 2,
     }
-    try{
+    try {
       await Company.findAll(query);
       fail();
-    } catch(err) {
+    } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
       expect(err.status).toEqual(400);
     }
@@ -293,10 +293,10 @@ describe("findAll", function () {
     let query = {
       maxEmployees: 0,
     }
-    try{
+    try {
       await Company.findAll(query);
       fail();
-    } catch(err) {
+    } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
       expect(err.status).toEqual(400);
     }
@@ -306,10 +306,10 @@ describe("findAll", function () {
     let query = {
       minEmployees: 4,
     }
-    try{
+    try {
       await Company.findAll(query);
       fail();
-    } catch(err) {
+    } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
       expect(err.status).toEqual(400);
     }
@@ -319,31 +319,106 @@ describe("findAll", function () {
     let query = {
       nameLike: "apple",
     }
-    try{
+    try {
       await Company.findAll(query);
       fail();
-    } catch(err) {
+    } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
       expect(err.status).toEqual(400);
     }
   });
+
+  //Invalid input -- try to query something that's not there
+  test("Invalid input: return error message", async function(){
+    let query = {
+      happyEmployees: true,
+    }
+    try {
+      await Company.findAll(query);
+      fail()
+    } catch (err){
+      expect(err instanceof BadRequestError).toBeTruthy();
+      expect(err.status).toEqual(400);
+    }
+  } )
 
 
 });
 
 
 /************************************** getWhereClause */
-describe("getWhereClause", function() {
-  
+describe("getWhereClause", function () {
+
   // one parameter "nameLike" pass in
-  test("pass one parameter -- nameLike", function() {
-    const result = getWhereClause({nameLike: "c"});
+  test("pass one parameter -- nameLike", function () {
+    const result = Company.getWhereClause({ nameLike: "c" });
     expect(result).toEqual({
-      whereClause : "name ILIKE $1",
-      values:  [`%${nameLike}%`]
+      whereClause: "name ILIKE $1",
+      values: [`%${nameLike}%`],
     });
   });
-  
+
+  // one parameter "minEmployees" passed in
+  test("pass one parameter -- minEmployees", function () {
+    const result = Company.getWhereClause({ minEmployees: 10 });
+    expect(result).toEqual({
+      whereClause: "numEmployees >= $1",
+      values: [minEmployees],
+    });
+  });
+  // one parameter "maxEmployees" passed in
+
+  test("pass one parameter -- maxEmployees", function () {
+    const result = Company.getWhereClause({ maxEmployees: 10 });
+    expect(result).toEqual({
+      whereClause: "numEmployees <= $1",
+      values: [maxEmployees],
+    });
+  });
+
+  // two params: " min and max"
+  test("pass two parameters -- minEmployees and maxEmployees", function () {
+    const result = Company.getWhereClause({ maxEmployees: 10, minEmployees: 5 });
+    expect(result).toEqual({
+      whereClause: "numEmployees <= $1 AND numEmployees >= $2",
+      values: [maxEmployees, minEmployees],
+    });
+  });
+  //two params: name and min
+  test("pass two parameters -- nameLike and minEmployees", function () {
+    const result = Company.getWhereClause({ nameLike: "apple", minEmployees: 5 });
+    expect(result).toEqual({
+      whereClause: "name ILIKE $1 AND numEmployees >= $2",
+      values: [`%${nameLike}%`, minEmployees],
+    });
+  });
+  //two params: name and max
+  test("pass two parameters -- nameLike and maxEmployees", function () {
+    const result = Company.getWhereClause({ nameLike: "apple", maxEmployees: 5 });
+    expect(result).toEqual({
+      whereClause: "name ILIKE $1 AND numEmployees <= $2",
+      values: [`%${nameLike}%`, maxEmployees],
+    });
+  });
+
+  // all three parameters passed in parameters
+  test("pass all parameters -- nameLike, maxEmployees, minEmployees", function () {
+    const result = Company.getWhereClause({
+      nameLike: "apple",
+      minEmployees: 5,
+      maxEmployees: 10,
+    });
+
+    expect(result).toEqual({
+      whereClause: `name ILIKE $1 
+                    AND numEmployees >= $2 
+                    AND numEmployees <= $3`,
+      values: [`%${nameLike}%`, minEmployees, maxEmployees],
+    });
+  });
+
+
+
 });
 
 /************************************** get */
@@ -388,7 +463,7 @@ describe("update", function () {
     });
 
     const result = await db.query(
-          `SELECT handle, name, description, num_employees, logo_url
+      `SELECT handle, name, description, num_employees, logo_url
            FROM companies
            WHERE handle = 'c1'`);
     expect(result.rows).toEqual([{
@@ -415,7 +490,7 @@ describe("update", function () {
     });
 
     const result = await db.query(
-          `SELECT handle, name, description, num_employees, logo_url
+      `SELECT handle, name, description, num_employees, logo_url
            FROM companies
            WHERE handle = 'c1'`);
     expect(result.rows).toEqual([{
@@ -452,7 +527,7 @@ describe("remove", function () {
   test("works", async function () {
     await Company.remove("c1");
     const res = await db.query(
-        "SELECT handle FROM companies WHERE handle='c1'");
+      "SELECT handle FROM companies WHERE handle='c1'");
     expect(res.rows.length).toEqual(0);
   });
 
