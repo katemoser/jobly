@@ -95,7 +95,7 @@ class Company {
    *        values:  [maxEmployees, minEmployees]} 
    * 
    */
-  static getWhereClause(queryStringsParams) {
+  // static getWhereClause(queryStringsParams) {
     // if(nameLike) {
     //   `name ILIKE $1, ['%{nameLike}%']`
     // }
@@ -119,12 +119,10 @@ class Company {
     //   `numEmployees <= $1 AND numEmployees >= $2, 
     //   [maxEmployees, minEmployees]`
     // }
-    //if({}){
-    //  {}
-    //}
-    }
+   
+  //   }
 
-  }
+  // }
 
 
 

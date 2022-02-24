@@ -248,19 +248,103 @@ describe("findAll", function () {
     ]);
   });
 
-  // filter by the minEmployees and maxEployees
-
+  // filter by the minEmployees and maxEmployees
+  test("works: filter by minEmployees and maxEmployees", async function () {
+    let query = {
+      minEmployees: 2,
+      maxEmployees: 3,
+    }
+    const companies = await Company.findAll(query);
+    expect(companies).toEqual([
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      },
+      {
+        handle: "c3",
+        name: "C3",
+        description: "Desc3",
+        numEmployees: 3,
+        logoUrl: "http://c3.img",
+      },
+    ]);
+  });
   // test invalid filter conditions
 
   // test minEmployees > maxEmployees
+  test("return error message: if minEmployees > maxEmployees", async function () {
+    let query = {
+      minEmployees: 3,
+      maxEmployees: 2,
+    }
+    try{
+      await Company.findAll(query);
+      fail();
+    } catch(err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+      expect(err.status).toEqual(400);
+    }
+  });
   // test maxEmployees is too low
+  test("return error message: maxEmployees is too low", async function () {
+    let query = {
+      maxEmployees: 0,
+    }
+    try{
+      await Company.findAll(query);
+      fail();
+    } catch(err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+      expect(err.status).toEqual(400);
+    }
+  });
   // test minEmployees is too high
+  test("return error message: minEmployees is too high", async function () {
+    let query = {
+      minEmployees: 4,
+    }
+    try{
+      await Company.findAll(query);
+      fail();
+    } catch(err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+      expect(err.status).toEqual(400);
+    }
+  });
   // test nameLike doesn't exist
+  test("return error message: nameLike doesn't exist", async function () {
+    let query = {
+      nameLike: "apple",
+    }
+    try{
+      await Company.findAll(query);
+      fail();
+    } catch(err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+      expect(err.status).toEqual(400);
+    }
+  });
 
 
 });
 
 
+/************************************** getWhereClause */
+describe("getWhereClause", function() {
+  
+  // one parameter "nameLike" pass in
+  test("pass one parameter -- nameLike", function() {
+    const result = getWhereClause({nameLike: "c"});
+    expect(result).toEqual({
+      whereClause : "name ILIKE $1",
+      values:  [`%${nameLike}%`]
+    });
+  });
+  
+});
 
 /************************************** get */
 
