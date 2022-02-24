@@ -92,7 +92,9 @@ class Company {
       returning = companiesRes.rows;
     }
 
-    if (returning.length === 0) throw new BadRequestError("Could not find any matches in Database");
+    if (returning.length === 0) {
+      throw new BadRequestError("Could not find any matches in Database");
+    }
     return returning;
   }
 
@@ -119,15 +121,13 @@ class Company {
    */
   static getWhereClause(queryStringParams) {
     let keys = Object.keys(queryStringParams);
-    console.log(`***********KEYS: ${keys}`);
 
     let whereClause = '';
     let values = [];
     let idx = 0;
     for (let key of keys) {
       idx++;
-      console.log(idx);
-      
+
       if (idx > 1) {
         whereClause = whereClause.concat(" AND ");
       }
@@ -145,9 +145,9 @@ class Company {
       if (key === "maxEmployees") {
         whereClause = whereClause.concat(`num_employees <= $${idx}`);
         values.push(queryStringParams[key]);
-      } 
+      }
     }
-    
+
     return {
       whereClause,
       values,

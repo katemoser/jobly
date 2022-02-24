@@ -88,7 +88,6 @@ describe("findAll", function () {
 
 
   // test findAll with filters
-
   // filter by the name
   test("works: filter by name", async function () {
     let query = {
@@ -168,7 +167,6 @@ describe("findAll", function () {
   });
 
   // filter by the maxEmployees
-
   test("works: filter by maxEmployees = '2', two results", async function () {
     let query = {
       maxEmployees: 2,
@@ -272,22 +270,7 @@ describe("findAll", function () {
       },
     ]);
   });
-  // test invalid filter conditions
-
-  // test minEmployees > maxEmployees -- will move to route
-  // test("return error message: if minEmployees > maxEmployees", async function () {
-  //   let query = {
-  //     minEmployees: 3,
-  //     maxEmployees: 2,
-  //   }
-  //   try {
-  //     await Company.findAll(query);
-  //     fail();
-  //   } catch (err) {
-  //     expect(err instanceof BadRequestError).toBeTruthy();
-  //     expect(err.status).toEqual(400);
-  //   }
-  // });
+  
   // test maxEmployees is too low
   test("return error message: maxEmployees is too low", async function () {
     let query = {
@@ -301,6 +284,7 @@ describe("findAll", function () {
       expect(err.status).toEqual(400);
     }
   });
+
   // test minEmployees is too high
   test("return error message: minEmployees is too high", async function () {
     let query = {
@@ -314,6 +298,7 @@ describe("findAll", function () {
       expect(err.status).toEqual(400);
     }
   });
+
   // test nameLike doesn't exist
   test("return error message: nameLike doesn't exist", async function () {
     let query = {
@@ -327,23 +312,6 @@ describe("findAll", function () {
       expect(err.status).toEqual(400);
     }
   });
-
-  //Invalid input -- try to query something that's not there
-  //WILL CHECK IN ROUTE INSTEAD
-  // test("Invalid input: return error message", async function(){
-  //   let query = {
-  //     happyEmployees: true,
-  //   }
-  //   try {
-  //     await Company.findAll(query);
-  //     fail()
-  //   } catch (err){
-  //     expect(err instanceof BadRequestError).toBeTruthy();
-  //     expect(err.status).toEqual(400);
-  //   }
-  // } )
-
-
 });
 
 
@@ -373,8 +341,8 @@ describe("getWhereClause", function () {
       values: [query.minEmployees],
     });
   });
-  // one parameter "maxEmployees" passed in
 
+  // one parameter "maxEmployees" passed in
   test("pass one parameter -- maxEmployees", function () {
     const query = { maxEmployees: 10 }
     const result = Company.getWhereClause(query);
@@ -393,6 +361,7 @@ describe("getWhereClause", function () {
       values: [query.maxEmployees, query.minEmployees],
     });
   });
+
   //two params: name and min
   test("pass two parameters -- nameLike and minEmployees", function () {
     const query = { nameLike: "apple", minEmployees: 5 };
@@ -402,6 +371,7 @@ describe("getWhereClause", function () {
       values: [`%${query.nameLike}%`, query.minEmployees],
     });
   });
+
   //two params: name and max
   test("pass two parameters -- nameLike and maxEmployees", function () {
     const query = { nameLike: "apple", maxEmployees: 5 };
@@ -426,9 +396,6 @@ describe("getWhereClause", function () {
       values: [`%${query.nameLike}%`, query.minEmployees, query.maxEmployees],
     });
   });
-
-
-
 });
 
 /************************************** get */
