@@ -145,11 +145,9 @@ class Company {
       if (key === "maxEmployees") {
         whereClause = whereClause.concat(`num_employees <= $${idx}`);
         values.push(queryStringParams[key]);
-      }
-
-
-      
+      } 
     }
+    
     return {
       whereClause,
       values,

@@ -422,9 +422,7 @@ describe("getWhereClause", function () {
     const result = Company.getWhereClause(query);
 
     expect(result).toEqual({
-      whereClause: `name ILIKE $1 
-                    AND num_employees >= $2 
-                    AND num_employees <= $3`,
+      whereClause: `name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3`,
       values: [`%${query.nameLike}%`, query.minEmployees, query.maxEmployees],
     });
   });
