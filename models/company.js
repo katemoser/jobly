@@ -119,40 +119,41 @@ class Company {
    */
   static getWhereClause(queryStringParams) {
     let keys = Object.keys(queryStringParams);
+    console.log(`***********KEYS: ${keys}`);
 
     let whereClause = '';
     let values = [];
     let idx = 0;
     for (let key of keys) {
+      idx++;
+      console.log(idx);
       
-      if (idx > 0) {
+      if (idx > 1) {
         whereClause = whereClause.concat(" AND ");
       }
 
       if (key === "nameLike") {
-        idx = idx + 1;
         whereClause = whereClause.concat(`name ILIKE $${idx}`);
         values.push(`%${queryStringParams[key]}%`);
       }
 
       if (key === "minEmployees") {
-        idx = idx + 1;
         whereClause = whereClause.concat(`num_employees >= $${idx}`);
         values.push(queryStringParams[key]);
       }
 
       if (key === "maxEmployees") {
-        idx = idx + 1;
         whereClause = whereClause.concat(`num_employees <= $${idx}`);
         values.push(queryStringParams[key]);
       }
 
 
-      return {
-        whereClause,
-        values,
-      };
+      
     }
+    return {
+      whereClause,
+      values,
+    };
   }
 
 

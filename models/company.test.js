@@ -369,7 +369,7 @@ describe("getWhereClause", function () {
     }
     const result = Company.getWhereClause(query);
     expect(result).toEqual({
-      whereClause: "numEmployees >= $1",
+      whereClause: "num_employees >= $1",
       values: [query.minEmployees],
     });
   });
@@ -379,7 +379,7 @@ describe("getWhereClause", function () {
     const query = { maxEmployees: 10 }
     const result = Company.getWhereClause(query);
     expect(result).toEqual({
-      whereClause: "numEmployees <= $1",
+      whereClause: "num_employees <= $1",
       values: [query.maxEmployees],
     });
   });
@@ -389,7 +389,7 @@ describe("getWhereClause", function () {
     const query = { maxEmployees: 10, minEmployees: 5 };
     const result = Company.getWhereClause(query);
     expect(result).toEqual({
-      whereClause: "numEmployees <= $1 AND numEmployees >= $2",
+      whereClause: "num_employees <= $1 AND num_employees >= $2",
       values: [query.maxEmployees, query.minEmployees],
     });
   });
@@ -398,7 +398,7 @@ describe("getWhereClause", function () {
     const query = { nameLike: "apple", minEmployees: 5 };
     const result = Company.getWhereClause(query);
     expect(result).toEqual({
-      whereClause: "name ILIKE $1 AND numEmployees >= $2",
+      whereClause: "name ILIKE $1 AND num_employees >= $2",
       values: [`%${query.nameLike}%`, query.minEmployees],
     });
   });
@@ -407,7 +407,7 @@ describe("getWhereClause", function () {
     const query = { nameLike: "apple", maxEmployees: 5 };
     const result = Company.getWhereClause(query);
     expect(result).toEqual({
-      whereClause: "name ILIKE $1 AND numEmployees <= $2",
+      whereClause: "name ILIKE $1 AND num_employees <= $2",
       values: [`%${query.nameLike}%`, query.maxEmployees],
     });
   });
@@ -423,8 +423,8 @@ describe("getWhereClause", function () {
 
     expect(result).toEqual({
       whereClause: `name ILIKE $1 
-                    AND numEmployees >= $2 
-                    AND numEmployees <= $3`,
+                    AND num_employees >= $2 
+                    AND num_employees <= $3`,
       values: [`%${query.nameLike}%`, query.minEmployees, query.maxEmployees],
     });
   });
