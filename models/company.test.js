@@ -49,7 +49,7 @@ describe("create", function () {
     try {
       await Company.create(newCompany);
       await Company.create(newCompany);
-      fail();
+      throw new Error("You shouldn't get here");
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
     }
