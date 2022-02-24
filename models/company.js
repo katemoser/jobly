@@ -66,8 +66,9 @@ class Company {
    * */
 
   static async findAll(queryStringParams) {
-    if (queryStringParams) {
+    let returning;
 
+    if (queryStringParams) {
       let result = Company.getWhereClause(queryStringParams);
       const companiesRes = await db.query(
         `SELECT handle,
@@ -78,18 +79,21 @@ class Company {
            FROM companies
            WHERE ${result.whereClause}
            ORDER BY name`, result.values);
-      return companiesRes.rows;
+      returning = companiesRes.rows;
+    } else {
+      const companiesRes = await db.query(
+        `SELECT handle,
+                  name,
+                  description,
+                  num_employees AS "numEmployees",
+                  logo_url AS "logoUrl"
+             FROM companies
+             ORDER BY name`);
+      returning = companiesRes.rows;
     }
 
-    const companiesRes = await db.query(
-      `SELECT handle,
-                name,
-                description,
-                num_employees AS "numEmployees",
-                logo_url AS "logoUrl"
-           FROM companies
-           ORDER BY name`);
-    return companiesRes.rows;
+    if (returning.length === 0) throw new BadRequestError("Could not find any matches in Database");
+    return returning;
   }
 
 
@@ -116,33 +120,40 @@ class Company {
   static getWhereClause(queryStringParams) {
     let keys = Object.keys(queryStringParams);
 
-    let whereClause = "";
+    let whereClause = '';
     let values = [];
     let idx = 0;
     for (let key of keys) {
+      
       if (idx > 0) {
-        whereClause.concat(" AND ");
+        whereClause = whereClause.concat(" AND ");
       }
+
       if (key === "nameLike") {
-        whereClause.concat(`name ILIKE $${idx++}`);
+        idx = idx + 1;
+        whereClause = whereClause.concat(`name ILIKE $${idx}`);
         values.push(`%${queryStringParams[key]}%`);
       }
 
       if (key === "minEmployees") {
-        whereClause.concat(`numEmployees >= $${idx++}`);
+        idx = idx + 1;
+        whereClause = whereClause.concat(`num_employees >= $${idx}`);
         values.push(queryStringParams[key]);
       }
 
       if (key === "maxEmployees") {
-        whereClause.concat(`numEmployees <= $${idx++}`);
+        idx = idx + 1;
+        whereClause = whereClause.concat(`num_employees <= $${idx}`);
         values.push(queryStringParams[key]);
       }
+
 
       return {
         whereClause,
         values,
       };
     }
+  }
 
 
 

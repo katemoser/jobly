@@ -274,20 +274,20 @@ describe("findAll", function () {
   });
   // test invalid filter conditions
 
-  // test minEmployees > maxEmployees
-  test("return error message: if minEmployees > maxEmployees", async function () {
-    let query = {
-      minEmployees: 3,
-      maxEmployees: 2,
-    }
-    try {
-      await Company.findAll(query);
-      fail();
-    } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
-      expect(err.status).toEqual(400);
-    }
-  });
+  // test minEmployees > maxEmployees -- will move to route
+  // test("return error message: if minEmployees > maxEmployees", async function () {
+  //   let query = {
+  //     minEmployees: 3,
+  //     maxEmployees: 2,
+  //   }
+  //   try {
+  //     await Company.findAll(query);
+  //     fail();
+  //   } catch (err) {
+  //     expect(err instanceof BadRequestError).toBeTruthy();
+  //     expect(err.status).toEqual(400);
+  //   }
+  // });
   // test maxEmployees is too low
   test("return error message: maxEmployees is too low", async function () {
     let query = {
@@ -329,18 +329,19 @@ describe("findAll", function () {
   });
 
   //Invalid input -- try to query something that's not there
-  test("Invalid input: return error message", async function(){
-    let query = {
-      happyEmployees: true,
-    }
-    try {
-      await Company.findAll(query);
-      fail()
-    } catch (err){
-      expect(err instanceof BadRequestError).toBeTruthy();
-      expect(err.status).toEqual(400);
-    }
-  } )
+  //WILL CHECK IN ROUTE INSTEAD
+  // test("Invalid input: return error message", async function(){
+  //   let query = {
+  //     happyEmployees: true,
+  //   }
+  //   try {
+  //     await Company.findAll(query);
+  //     fail()
+  //   } catch (err){
+  //     expect(err instanceof BadRequestError).toBeTruthy();
+  //     expect(err.status).toEqual(400);
+  //   }
+  // } )
 
 
 });
@@ -351,69 +352,80 @@ describe("getWhereClause", function () {
 
   // one parameter "nameLike" pass in
   test("pass one parameter -- nameLike", function () {
-    const result = Company.getWhereClause({ nameLike: "c" });
+    const query = {
+      nameLike: "c", 
+    }
+    const result = Company.getWhereClause(query);
     expect(result).toEqual({
       whereClause: "name ILIKE $1",
-      values: [`%${nameLike}%`],
+      values: [`%${query.nameLike}%`],
     });
   });
 
   // one parameter "minEmployees" passed in
   test("pass one parameter -- minEmployees", function () {
-    const result = Company.getWhereClause({ minEmployees: 10 });
+    const query = {
+      minEmployees: 10,
+    }
+    const result = Company.getWhereClause(query);
     expect(result).toEqual({
       whereClause: "numEmployees >= $1",
-      values: [minEmployees],
+      values: [query.minEmployees],
     });
   });
   // one parameter "maxEmployees" passed in
 
   test("pass one parameter -- maxEmployees", function () {
-    const result = Company.getWhereClause({ maxEmployees: 10 });
+    const query = { maxEmployees: 10 }
+    const result = Company.getWhereClause(query);
     expect(result).toEqual({
       whereClause: "numEmployees <= $1",
-      values: [maxEmployees],
+      values: [query.maxEmployees],
     });
   });
 
   // two params: " min and max"
   test("pass two parameters -- minEmployees and maxEmployees", function () {
-    const result = Company.getWhereClause({ maxEmployees: 10, minEmployees: 5 });
+    const query = { maxEmployees: 10, minEmployees: 5 };
+    const result = Company.getWhereClause(query);
     expect(result).toEqual({
       whereClause: "numEmployees <= $1 AND numEmployees >= $2",
-      values: [maxEmployees, minEmployees],
+      values: [query.maxEmployees, query.minEmployees],
     });
   });
   //two params: name and min
   test("pass two parameters -- nameLike and minEmployees", function () {
-    const result = Company.getWhereClause({ nameLike: "apple", minEmployees: 5 });
+    const query = { nameLike: "apple", minEmployees: 5 };
+    const result = Company.getWhereClause(query);
     expect(result).toEqual({
       whereClause: "name ILIKE $1 AND numEmployees >= $2",
-      values: [`%${nameLike}%`, minEmployees],
+      values: [`%${query.nameLike}%`, query.minEmployees],
     });
   });
   //two params: name and max
   test("pass two parameters -- nameLike and maxEmployees", function () {
-    const result = Company.getWhereClause({ nameLike: "apple", maxEmployees: 5 });
+    const query = { nameLike: "apple", maxEmployees: 5 };
+    const result = Company.getWhereClause(query);
     expect(result).toEqual({
       whereClause: "name ILIKE $1 AND numEmployees <= $2",
-      values: [`%${nameLike}%`, maxEmployees],
+      values: [`%${query.nameLike}%`, query.maxEmployees],
     });
   });
 
   // all three parameters passed in parameters
   test("pass all parameters -- nameLike, maxEmployees, minEmployees", function () {
-    const result = Company.getWhereClause({
+    const query = {
       nameLike: "apple",
       minEmployees: 5,
       maxEmployees: 10,
-    });
+    }
+    const result = Company.getWhereClause(query);
 
     expect(result).toEqual({
       whereClause: `name ILIKE $1 
                     AND numEmployees >= $2 
                     AND numEmployees <= $3`,
-      values: [`%${nameLike}%`, minEmployees, maxEmployees],
+      values: [`%${query.nameLike}%`, query.minEmployees, query.maxEmployees],
     });
   });
 
