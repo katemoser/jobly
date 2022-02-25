@@ -65,7 +65,9 @@ class Job {
    * Throws NotFoundError if not found.
   */
 
-  static async remove(id);
+  static async remove(id){
+    
+  }
 
 }
 

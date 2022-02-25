@@ -50,15 +50,15 @@ describe("create", function () {
     });
 
     //add with invalid data
-    test("not work for adding invalid data", async function() {
+    test("not work for adding invalid data", async function () {
         const badJob = {
             title: "badJob",
             salary: 5000,
         };
-        try{
+        try {
             const result = await Job.create(badJob);
             throw new Error("You shouldn't get here");
-        } catch(err) {
+        } catch (err) {
             expect(err instanceof BadRequestError).toBeTruthy();
         }
     });
@@ -76,19 +76,19 @@ describe("findAll", function () {
                 salary: 100000,
                 equity: .1,
                 companyHandle: "c1",
-              },
-              {
+            },
+            {
                 title: "testJob2",
                 salary: 20000,
                 equity: .5,
                 companyHandle: "c2",
-              },
-              {
+            },
+            {
                 title: "testJob3",
                 salary: 50000,
                 equity: .01,
                 companyHandle: "c2",
-              }]
+            }]
         );
     });
     //LATER: find all WITH FILTERS
@@ -99,7 +99,7 @@ describe("findAll", function () {
 
 describe("get", function () {
     //get company that exists
-    test("works if job id exists", async function() {
+    test("works if job id exists", async function () {
         let result = await Job.get(job1Id);
         expect(result).toEqual({
             id: job1Id,
@@ -107,15 +107,15 @@ describe("get", function () {
             salary: 100000,
             equity: .1,
             companyHandle: "c1",
-          });
+        });
     });
 
     //not found if company doesn't exist
-    test("not works if job id doesn't exist", async function() {
-        try{
+    test("not works if job id doesn't exist", async function () {
+        try {
             await Job.get(0);
             throw new Error('Never throw this error!')
-        } catch(err) {
+        } catch (err) {
             expect(err instanceof BadRequestError).toBeTruthy();
         }
     });
@@ -124,10 +124,83 @@ describe("get", function () {
 /************************************** update */
 
 describe("update", function () {
-    //successful update for all fields
+    const updateData = {
+        title: "newJobTitle",
+        salary: 1,
+        equity: .01,
+    };
+    //successful update for all changeable fields
+    test("works", async function () {
+        let job = Job.update(job1Id, updateData);
+        expect(job).toEqual({
+            id: job1Id,
+            title: "newJobTitle",
+            salary: 1,
+            equity: .01,
+            companyHandle: "c1",
+        });
+
+        //test in database
+        const result = await db.query(
+            `SELECT id, title, salary, equity, company_handle
+                FROM jobs
+                WHERE title = 'newJobTitle'`
+        );
+        expect(result.rows[0]).toEqual({
+            id: job1Id,
+            title: "newJobTitle",
+            salary: 1,
+            equity: .01,
+            companyHandle: "c1",
+        });
+    });
     //works with some (null) fields
+    test("works with nullable fields null", async function(){
+        let job = Job.update(job1Id, {
+            title : "brandNewTitle",
+            salary: null,
+            equity : null,
+        });
+        expect(job).toEqual({
+            id: job1Id,
+            title: "brandNewTitle",
+            salary: null,
+            equity: null,
+            companyHandle: "c1",
+        });
+
+        //check db
+        const result = await db.query(
+            `SELECT id, title, salary, equity, company_handle
+                FROM jobs
+                WHERE title = 'brandNewTitle'`
+        );
+        expect(result.rows[0]).toEqual({
+            id: job1Id,
+            title: "brandNewTitle",
+            salary: null,
+            equity: null,
+            companyHandle: "c1",
+        });
+    })
     // not found no such company
+    test("not found if no such job", async function (){
+        try{
+            await Job.update(0, updateData);
+            throw new Error("We should never get this error");
+        } catch(err) {
+            expect(err instanceof NotFoundError).toBeTruthy();
+        }
+    })
     //bad request no data
+    test("bad request with no data", async function () {
+        try {
+          await Job.update(job1Id, {});
+          throw new Error("We should never get this error");
+        } catch (err) {
+          expect(err instanceof BadRequestError).toBeTruthy();
+        }
+      });
 
 });
 
@@ -135,5 +208,21 @@ describe("update", function () {
 
 describe("remove", function () {
     //successful delete
+    test("works", async function () {
+        await Job.remove(job1Id);
+        const res = await db.query(
+          `SELECT id 
+            FROM jobs 
+            WHERE id = ${job1Id}`);
+        expect(res.rows.length).toEqual(0);
+      });
     //not found if no such id
+    test("not found if no such job", async function () {
+        try {
+          await Job.remove(0);
+          throw new Error("We should never get this error");
+        } catch (err) {
+          expect(err instanceof NotFoundError).toBeTruthy();
+        }
+      });
 })
