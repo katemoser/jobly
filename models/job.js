@@ -16,6 +16,9 @@ class Job {
    * 
    * Throws BadRequestError if job already in database.
   **/
+  static async create({title, salary, equity, companyHandle}){
+
+  }
 
 
   /** Find all jobs 
@@ -23,12 +26,20 @@ class Job {
    * Returns [{id, title, salary, equity, company_handle}]
   **/
 
+  static async findAll(){
+
+  }
+
 
   /** Get one job by Id
    * take job Id as input
    * Returns {id, title, salary, equity, company_handle}
    * Throws NotFoundError if not found.
   **/
+
+  static async get(id){
+
+  }
 
 
 
@@ -43,6 +54,10 @@ class Job {
    * Throws NotFoundError if not found.
   **/
 
+  static async update(id, data){
+
+  }
+
   /** Delete a job by Id 
    * 
    * take job Id as input
@@ -50,4 +65,9 @@ class Job {
    * Throws NotFoundError if not found.
   */
 
+  static async remove(id);
+
 }
+
+
+module.exports = { Job };
