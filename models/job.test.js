@@ -91,6 +91,7 @@ describe("findAll", function () {
             }]
         );
     });
+    //test for no jobs found not found error
     //LATER: find all WITH FILTERS
 
 });

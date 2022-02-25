@@ -14,20 +14,42 @@ class Job {
    * 
    * Returns {id, title, salary, equity, company_handle}
    * 
-   * Throws BadRequestError if job already in database.
   **/
   static async create({title, salary, equity, companyHandle}){
-
+    const result = await db.query(
+      `INSERT INTO jobs(
+          title,
+          salary,
+          equity,
+          company_handle)
+        VALUES ($1, $2, $3, $4)
+        RETURNING id, title, salray, equity, company_handle AS "companyHandle"`,
+        [
+          title, 
+          salary, 
+          equity, 
+          companyHandle
+        ]  
+    );
+    const job = result.rows[0];
+    if(!job) throw new BadRequestError("Could not create job");
+    return job;
   }
 
 
   /** Find all jobs 
    * 
-   * Returns [{id, title, salary, equity, company_handle}]
+   * Returns [{id, title, salary, equity, companyHandle}]
   **/
 
   static async findAll(){
-
+    const result = db.query(
+      `SELECT id, title, salary, equity, company_handle AS 'companyHandle'
+        FROM jobs`
+    )
+    const jobs = (await result).rows;
+    if(!jobs) throw new NotFoundError("No jobs found");
+    return jobs;
   }
 
 
@@ -66,7 +88,7 @@ class Job {
   */
 
   static async remove(id){
-    
+
   }
 
 }
