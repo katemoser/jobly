@@ -114,6 +114,25 @@ describe("ensureAdmin", function () {
     };
     ensureAdmin(req, res, next);
   })
+
+  test("Logged in user not admin BUT 'false' ", function(){
+    expect.assertions(1);
+    const req = {};
+    const res = {
+      locals: {
+        user: {
+          username: "test",
+          isAdmin: "false",
+        }
+      }
+    };
+    const next = function(err){
+      expect(err instanceof UnauthorizedError).toBeTruthy();
+    };
+    ensureAdmin(req, res, next);
+  })
+
+
   //test error raised if no logged in user
   test("return error if no login", function(){
     expect.assertions(1);
