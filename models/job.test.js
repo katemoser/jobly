@@ -32,7 +32,6 @@ describe("create", function () {
     //add with valid data
     test("works", async function () {
         let job = await Job.create(newJob);
-        expect(job.id).toEqual(expect.any(Integer));
         expect(job).toEqual({ ...newJob, id: job.id });
 
         //make sure it's in the database
